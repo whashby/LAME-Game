@@ -32,8 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const fireworksSound = new Audio("sounds/fireworks.mp3");
 
 	tickSound.currentTime = 1;
-    fireworksSound.volume = 0.5;
+    fireworksSound.volume = 0.3;
 
+    
     // Game State
     let playerName = "";
     let currentMode = "";
@@ -48,8 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
     startGameButton.addEventListener("click", () => {
 		clickSound.play();
         playerName = playerNameInput.value.trim();
+        
         if (!playerName || !isNaN(playerName)) {
             alert("Please enter a valid name.");
+            playerNameInput.focus();
             return;
         }
         sessionStorage.setItem("playerName", playerName);
@@ -386,8 +389,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function stopFireworks() {
-        fireworksSound.pause();
-        fireworksSound.currentTime = 0;
+        if(fireworksSound.playing) {
+            fireworksSound.pause();
+            fireworksSound.currentTime = 0;
+        }
+        
 		// Stop the interval that creates random fireworks
 		const highestIntervalId = window.setInterval(() => {}, 0); // Get the highest interval ID
 		for (let i = 0; i <= highestIntervalId; i++) {
@@ -404,6 +410,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		const particles = document.querySelectorAll('.particle');
 		particles.forEach(particle => particle.remove());
 	}
+    
+    // Stop Fireworks Audio
+    fireworksSound.addEventListener("ended",() => {
+        stopFireworks();
+    });
     
     // Stop Playback
     function resetSounds() {
